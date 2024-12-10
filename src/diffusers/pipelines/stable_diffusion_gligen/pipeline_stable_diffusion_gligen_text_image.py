@@ -456,6 +456,9 @@ class StableDiffusionGLIGENTextImagePipeline(DiffusionPipeline, StableDiffusionM
         negative_prompt=None,
         prompt_embeds=None,
         negative_prompt_embeds=None,
+        gligen_boxes=None,
+        gligen_phrases=None,
+        gligen_images=None,
         callback_on_step_end_tensor_inputs=None,
     ):
         if height % 8 != 0 or width % 8 != 0:
@@ -498,6 +501,12 @@ class StableDiffusionGLIGENTextImagePipeline(DiffusionPipeline, StableDiffusionM
                     f" got: `prompt_embeds` {prompt_embeds.shape} != `negative_prompt_embeds`"
                     f" {negative_prompt_embeds.shape}."
                 )
+        if gligen_boxes is not None and gligen_phrases is not None and gligen_images is not None:
+            assert len(gligen_boxes) == len(gligen_phrases) == len(gligen_images), "At least one of the length in `gligen_boxes`, `gligen_phrases` and `gligen_images` is not equal to the others."
+        elif gligen_boxes is not None and gligen_phrases is not None:
+            assert len(gligen_boxes) == len(gligen_phrases), "The length of `gligen_boxes` is not equal to the length of `gligen_phrases`."
+
+
 
     # Copied from diffusers.pipelines.stable_diffusion.pipeline_stable_diffusion.StableDiffusionPipeline.prepare_latents
     def prepare_latents(self, batch_size, num_channels_latents, height, width, dtype, device, generator, latents=None):
@@ -817,6 +826,9 @@ class StableDiffusionGLIGENTextImagePipeline(DiffusionPipeline, StableDiffusionM
             negative_prompt,
             prompt_embeds,
             negative_prompt_embeds,
+            gligen_boxes,
+            gligen_phrases,
+            gligen_images,
         )
 
         # 2. Define call parameters
